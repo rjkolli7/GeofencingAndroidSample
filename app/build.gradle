@@ -91,7 +91,11 @@ dependencies {
 
     // google maps
     implementation dep.gooleMaps
+    implementation dep.gooleMapsLocation
 
+    // gson
+    implementation dep.gson
+    
     // dagger
     implementation dep.daggerDep
     implementation dep.daggerAndroidDep

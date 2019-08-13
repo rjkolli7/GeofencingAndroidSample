@@ -10,9 +10,11 @@ import androidx.lifecycle.ViewModelProviders
 import com.rjkolli.gfsample.R
 import com.rjkolli.gfsample.databinding.FragmentMainBinding
 import com.rjkolli.gfsample.di.injector.Injectable
+import com.rjkolli.gfsample.helper.getCurrentSsid
+import com.rjkolli.gfsample.ui.base.BaseFragment
 import javax.inject.Inject
 
-class MainFragment : Fragment(), Injectable {
+class MainFragment : BaseFragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -34,6 +36,11 @@ class MainFragment : Fragment(), Injectable {
         binding.model = viewModel
         binding.lifecycleOwner = this
         binding.executePendingBindings()
+
+        context?.let { context -> getCurrentSsid(context) }
     }
 
+    override fun onLocationPermissionAccept() {
+        viewModel.onLocationPermissionGrant()
+    }
 }

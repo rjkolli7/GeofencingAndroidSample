@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.rjkolli.gfsample.R
 import com.rjkolli.gfsample.databinding.FragmentSettingsBinding
 import com.rjkolli.gfsample.di.injector.Injectable
+import com.rjkolli.gfsample.ui.base.BaseFragment
 import javax.inject.Inject
 
-class SettingsFragment : Fragment(), Injectable {
+class SettingsFragment : BaseFragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -32,11 +32,21 @@ class SettingsFragment : Fragment(), Injectable {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(SettingsViewModel::class.java)
+        viewModel.childFragmentManager = childFragmentManager
+        binding.model = viewModel
         binding.lifecycleOwner = this
         binding.executePendingBindings()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onLocationPermissionAccept() {
+        viewModel.onLocationPermissionGrant()
     }
 }

@@ -19,6 +19,8 @@ def versions = [
         daggerVersion           : "2.21",
 
         lifecycleVersion        : "2.0.0",
+
+        gson                    : "2.8.5"
 ]
 
 ext.androidConfig = [
@@ -43,7 +45,9 @@ ext.dep = [
         googleMaterialDep       : "com.google.android.material:material:$versions.googleMaterial",
         navigationFragmentKtxDep: "androidx.navigation:navigation-fragment-ktx:$versions.navigationVersion",
         navigationUiKtxDep      : "androidx.navigation:navigation-ui-ktx:$versions.navigationVersion",
+
         gooleMaps               : "com.google.android.gms:play-services-maps:$versions.googleMaps",
+        gooleMapsLocation       : "com.google.android.gms:play-services-location:$versions.googleMaps",
 
         daggerDep               : "com.google.dagger:dagger:$versions.daggerVersion",
         daggerAndroidDep        : "com.google.dagger:dagger-android:$versions.daggerVersion",
@@ -54,6 +58,8 @@ ext.dep = [
         lifecycleRuntime        : "androidx.lifecycle:lifecycle-runtime:$versions.lifecycleVersion",
         lifecycleExtension      : "androidx.lifecycle:lifecycle-extensions:$versions.lifecycleVersion",
         lifecycleCompiler       : "androidx.lifecycle:lifecycle-compiler:$versions.lifecycleVersion",
+
+        gson                    : "com.google.code.gson:gson:$versions.gson"
 ]
 
 ext.testDep = [
