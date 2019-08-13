@@ -4,15 +4,47 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'androidx.navigation.safeargs.kotlin'
+
+apply plugin: 'jacoco'
+
+apply plugin: 'kotlin-allopen'
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebugUnitTest.exec', 'outputs/code_coverage/debugAndroidTest/connected/**/*.ec'
+    ])
+}
+
 android {
-    compileSdkVersion 28
+    compileSdkVersion androidConfig.compileSdkVersion
     defaultConfig {
         applicationId "com.rjkolli.gfsample"
-        minSdkVersion 15
-        targetSdkVersion 28
+        minSdkVersion androidConfig.minSdkVersion
+        targetSdkVersion androidConfig.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -24,15 +56,59 @@ android {
             applicationIdSuffix '.debug'
         }
     }
+
+    dataBinding {
+        enabled = true
+    }
+
+    testOptions {
+        animationsDisabled true
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.core:core-ktx:1.0.2'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    // android standard libraries
+    implementation dep.androidxAppCompactDep
+    implementation dep.constraintLayoutDep
+
+    // kotlin standard libraries
+    implementation dep.kotlinDep
+    implementation dep.androidxCoreKtxDep
+
+    // design libraries
+    implementation dep.googleMaterialDep
+
+    // navigation
+    implementation dep.navigationFragmentKtxDep
+    implementation dep.navigationUiKtxDep
+
+    // google maps
+    implementation dep.gooleMaps
+
+    // dagger
+    implementation dep.daggerDep
+    implementation dep.daggerAndroidDep
+    implementation dep.daggerAndroidSupportDep
+    kapt dep.daggerAndroidProDep
+    kapt dep.daggerCompilerDep
+
+    // life cycle
+    implementation dep.lifecycleRuntime
+    implementation dep.lifecycleExtension
+    annotationProcessor dep.lifecycleCompiler
+
+    // unit test
+    testImplementation testDep.jUnitTestDep
+
+    // android test
+    androidTestImplementation testDep.androidTestRunnerDep
+    androidTestImplementation testDep.androidExtJunitTestDep
+    androidTestImplementation testDep.androidEspressoTestDep
 }

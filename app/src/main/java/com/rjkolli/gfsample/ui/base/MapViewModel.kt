@@ -1,26 +1,26 @@
-package com.rjkolli.gfsample
+package com.rjkolli.gfsample.ui.base
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.rjkolli.gfsample.R
+import com.rjkolli.gfsample.helper.SharedPreferenceHelper
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+abstract class MapViewModel constructor(pref: SharedPreferenceHelper) : ViewModel(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    var mapFragment: SupportMapFragment? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
+    fun setupMap(childFragmentManager: FragmentManager) {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
+        mapFragment = childFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        mapFragment?.getMapAsync(this)
     }
 
     /**
@@ -36,8 +36,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker and move the camera
-        val latlng = LatLng(3.1343385,101.6841484)
+        val latlng = LatLng(3.1343385, 101.6841484)
         mMap.addMarker(MarkerOptions().position(latlng).title("Marker in Kuala Lumpur, Malaysia"))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12f))
     }
+
 }
