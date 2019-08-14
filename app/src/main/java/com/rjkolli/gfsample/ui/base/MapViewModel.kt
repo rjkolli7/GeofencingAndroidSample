@@ -31,6 +31,7 @@ import com.rjkolli.gfsample.R
 import com.rjkolli.gfsample.data.GeoFenceData
 import com.rjkolli.gfsample.geolisteners.GeofenceBroadcastReceiver
 import com.rjkolli.gfsample.helper.GEOFENCEDATA
+import com.rjkolli.gfsample.helper.GEOFENCE_EXPIRATION_IN_MILLISECONDS
 import com.rjkolli.gfsample.helper.SharedPreferenceHelper
 import com.rjkolli.gfsample.helper.getErrorString
 
@@ -202,8 +203,9 @@ abstract class MapViewModel constructor(private val pref: SharedPreferenceHelper
                     longitude,
                     radius.toFloat()
                 )
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+//                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build()
         }
 
@@ -212,7 +214,7 @@ abstract class MapViewModel constructor(private val pref: SharedPreferenceHelper
 
     private fun buildGeofencingRequest(geofence: Geofence): GeofencingRequest {
         return GeofencingRequest.Builder()
-            .setInitialTrigger(0)
+            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
             .addGeofence(geofence)
             .build()
     }
