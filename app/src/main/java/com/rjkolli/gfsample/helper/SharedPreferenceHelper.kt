@@ -8,7 +8,9 @@ import javax.inject.Singleton
 @Singleton
 class SharedPreferenceHelper(private val app: GeofenceApp) {
 
-    fun getSharedPref(): SharedPreferences =
+    fun getContext(): Context? = app.applicationContext
+
+    private fun getSharedPref(): SharedPreferences =
         app.getSharedPreferences("geofence_pref", Context.MODE_PRIVATE)
 
     fun put(key: String, value: String?) {

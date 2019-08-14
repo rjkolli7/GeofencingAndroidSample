@@ -4,6 +4,7 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import androidx.core.app.ActivityCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import com.rjkolli.gfsample.helper.checkPermissions
 
 abstract class BaseFragment : Fragment() {
 
@@ -12,10 +13,7 @@ abstract class BaseFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         context?.let { context ->
-            if (checkSelfPermission(
-                    context, ACCESS_FINE_LOCATION
-                ) != PERMISSION_GRANTED
-            ) {
+            if (!checkPermissions(context)) {
                 requestPermissions(
                     arrayOf(ACCESS_FINE_LOCATION), REQUEST_LOCATION
                 )

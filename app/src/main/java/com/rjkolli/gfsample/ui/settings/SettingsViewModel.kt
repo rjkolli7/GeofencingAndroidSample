@@ -13,6 +13,7 @@ import com.rjkolli.gfsample.data.GeoFenceData
 import com.rjkolli.gfsample.helper.GEOFENCEDATA
 import com.rjkolli.gfsample.helper.SharedPreferenceHelper
 import com.rjkolli.gfsample.helper.WIFINAME
+import com.rjkolli.gfsample.helper.checkPermissions
 import com.rjkolli.gfsample.ui.base.MapViewModel
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -30,7 +31,7 @@ class SettingsViewModel @Inject constructor(private val pref: SharedPreferenceHe
     val progressDesc: MutableLiveData<String> = MutableLiveData()
     val showCentreMarker: MutableLiveData<Boolean> = MutableLiveData()
     var radius: Double = 0.0
-    lateinit var childFragmentManager: FragmentManager
+    var childFragmentManager: FragmentManager? = null
 
     init {
         showMap.value = false
@@ -82,20 +83,31 @@ class SettingsViewModel @Inject constructor(private val pref: SharedPreferenceHe
         }
 
         pref.put(WIFINAME, wifiName)
+        Toast.makeText(v.context, "$wifiName is successfully saved.", Toast.LENGTH_LONG).show()
     }
 
     fun saveGeoFenceData() = View.OnClickListener { v ->
-        if (showCentreMarker.value == true) {
-            showCentreMarker.value = false
-            showRadius.value = true
-            latLng = mMap?.cameraPosition?.target
-            showGeoLocationInMap(v.context, latLng, radius)
-        } else {
-            showRadius.value = false
-            showMap.value = false
-            geoFenceData = GeoFenceData(latLng, radius)
-            pref.put(GEOFENCEDATA, Gson().toJson(geoFenceData))
-            getLocationData()
+        if (checkPermissions(v.context)) {
+            if (showCentreMarker.value == true) {
+                showCentreMarker.value = false
+                showRadius.value = true
+                latLng = mMap?.cameraPosition?.target
+                showGeoLocationInMap(v.context, latLng, radius)
+            } else {
+                showRadius.value = false
+                showMap.value = false
+                geoFenceData = GeoFenceData(latLng, radius)
+                addGeoFence(
+                    geoFenceData,
+                    success = {
+                        pref.put(GEOFENCEDATA, Gson().toJson(geoFenceData))
+                        Toast.makeText(v.context, "Geo location added successfully.", Toast.LENGTH_LONG).show()
+                    },
+                    failure = {
+                        Toast.makeText(v.context, it, Toast.LENGTH_LONG).show()
+                    })
+                getLocationData()
+            }
         }
     }
 
@@ -108,5 +120,8 @@ class SettingsViewModel @Inject constructor(private val pref: SharedPreferenceHe
             val data = "LatLng : $latlng\nRadius : $radius"
             geoLocationObserver.value = data
         }
+    }
+
+    override fun onMapReady() {
     }
 }

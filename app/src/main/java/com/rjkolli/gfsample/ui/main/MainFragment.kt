@@ -19,7 +19,7 @@ class MainFragment : BaseFragment(), Injectable {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: MainViewModel
+    private var viewModel: MainViewModel? = null
 
     lateinit var binding: FragmentMainBinding
 
@@ -32,15 +32,24 @@ class MainFragment : BaseFragment(), Injectable {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainViewModel::class.java)
-        viewModel.setupMap(childFragmentManager)
+        viewModel?.setupMap(childFragmentManager)
         binding.model = viewModel
         binding.lifecycleOwner = this
         binding.executePendingBindings()
+    }
 
-        context?.let { context -> getCurrentSsid(context) }
+    override fun onResume() {
+        super.onResume()
+        viewModel?.let {vm ->
+            vm.mMap?.let {
+                activity?.let {
+                    vm.showGeoLocationInMap(it)
+                }
+            }
+        }
     }
 
     override fun onLocationPermissionAccept() {
-        viewModel.onLocationPermissionGrant()
+        viewModel?.onLocationPermissionGrant()
     }
 }
