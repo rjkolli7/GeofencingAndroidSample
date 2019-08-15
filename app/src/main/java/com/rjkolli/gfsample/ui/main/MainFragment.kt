@@ -43,6 +43,7 @@ class MainFragment : BaseFragment(), Injectable {
         viewModel?.let {vm ->
             vm.mMap?.let {
                 activity?.let {
+                    vm.getFenceData()
                     vm.showGeoLocationInMap(it)
                 }
             }

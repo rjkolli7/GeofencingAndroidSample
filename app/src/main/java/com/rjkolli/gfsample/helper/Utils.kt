@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.net.ConnectivityManager
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.rjkolli.gfsample.GeofenceApp
 
@@ -30,6 +31,7 @@ fun getCurrentSsid(context: Context): String? {
         val connectionInfo = wifiManager.connectionInfo
         if (connectionInfo != null && connectionInfo.ssid.isNotEmpty()) {
             ssid = connectionInfo.ssid
+            ssid = ssid.replace("\"", "")
         }
     }
 

@@ -147,7 +147,7 @@ abstract class MapViewModel constructor(private val pref: SharedPreferenceHelper
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    private fun getFenceData() {
+    fun getFenceData() {
         val gson = Gson()
 
         val geoFenceDataStr = pref.get(GEOFENCEDATA, null)
